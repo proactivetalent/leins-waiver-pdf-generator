@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --app-bg: #f4f4f5;
+  --surface: #ffffff;
+  --border: rgba(24, 24, 27, 0.08);
+  --accent: #18181b;
+  --accent-hover: #27272a;
+  --muted: #71717a;
+}
+
+::selection {
+  background-color: rgba(24, 24, 27, 0.12);
+}

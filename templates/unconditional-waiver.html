@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Unconditional Waiver of Liens — {{company}}</title>
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      @page {
+        size: letter;
+        margin: 0.75in;
+      }
+      body {
+        font-family: "Arial Narrow", Arial, Helvetica, sans-serif;
+        font-size: 12pt;
+        font-weight: normal;
+        line-height: 1.31;
+        margin: 0;
+        /* Tiny inset: justified lines + narrow fonts can extend past Chrome’s PDF clip. */
+        padding: 0 0.06in 0 0;
+        color: #000;
+        max-width: 100%;
+      }
+      .top-row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-end;
+        width: 100%;
+        margin-bottom: 0.25em;
+      }
+      .doc-project {
+        flex: 0 1 auto;
+        max-width: 65%;
+        font-size: 11pt;
+        padding-top: 1px;
+        text-align: left;
+      }
+      .doc-project:empty {
+        display: none;
+        margin: 0;
+      }
+      .doc-id-box {
+        /* border: 1px solid #000; */
+        /* padding: 3px 12px; */
+        flex-shrink: 0;
+        margin-left: auto;
+        font-size: 11pt;
+        /* min-width: 2.35em; */
+        text-align: right;
+      }
+      h1 {
+        text-align: center;
+        font-size: 13pt;
+        font-weight: normal;
+        margin: 0.2em 0 0.525em;
+        letter-spacing: 0.02em;
+      }
+      .salutation {
+        margin: 1.25em 0 0.525em;
+        text-align: left;
+      }
+      p {
+        margin: 0 0 0.55em;
+        text-align: justify;
+        overflow-wrap: break-word;
+      }
+      strong {
+        font-weight: bold;
+      }
+      .signature-block {
+        margin: 1.05em 0 0.375em;
+        width: 30%;
+        margin-left: auto;
+      }
+      .sig-line {
+        border-bottom: 1px solid #000;
+        min-height: 1.9em;
+        width: 100%;
+        margin-bottom: 0.14em;
+      }
+      .by-line {
+        text-align: right;
+        margin: 0;
+      }
+      .notary {
+        margin-top: 1em;
+      }
+      .notary-ack-block {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .notary-ack-block > p {
+        margin-top: 1em;
+        margin-bottom: 0.25em;
+        line-height: 1.275;
+        font-size: 11.75pt;
+        overflow-wrap: break-word;
+      }
+      table.jurisdiction {
+        border-collapse: collapse;
+        margin: 0 0 0.36em;
+      }
+      table.jurisdiction td {
+        vertical-align: top;
+        padding: 0 0 2px;
+        line-height: 1.265;
+        font-size: 11.75pt;
+      }
+      table.jurisdiction td:first-child {
+        padding-right: 0.315em;
+        white-space: nowrap;
+      }
+      .notary-sign {
+        margin-top: 1em;
+        max-width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .notary-line {
+        border-bottom: 1px solid #000;
+        min-height: 1.275em;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .notary-label {
+        text-align: center;
+        margin: 0.13em 0 0;
+        font-size: 11pt;
+      }
+      .indented {
+        text-indent: 33px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-row">
+      <span class="doc-project">{{project}}</span>
+      <div class="doc-id-box">{{documentId}}</div>
+    </div>
+
+    <h1><strong>UNCONDITIONAL WAIVER OF LIENS</strong></h1>
+
+    <p class="salutation">To All Whom It May Concern:</p>
+
+    <p class="indented">
+      WHEREAS, the undersigned <strong>{{company}}</strong> has been
+      employed by <strong>{{hiringEntity}}</strong> to furnish labor and/or materials
+      (the &ldquo;Work&rdquo;) for the project at
+      <strong>{{projectName}}</strong> (the &ldquo;Premises&rdquo;);
+    </p>
+
+    <p class="indented">
+      NOW THEREFORE, for and in consideration of
+      <strong>{{amountFormatted}}</strong> (<strong>{{amountWords}}</strong>) and other
+      valuable consideration, the receipt whereof is hereby acknowledged as payments on contract, the undersigned, to the extent of such payments, does hereby waive and release any and all lien or claim or right of lein on the above described Premises and the improvements thereon, under the statutes of the jurisdiction in which the aforesaid Premises are located relating to mechanics liens and on the monies or other consideration due or to become due from the owner, and on account of labor or materials, or both, or which may be furnished by the undersigned to or an account of the said individual or firm therein named for the said Premises or improvements
+    </p>
+
+    <p class="indented">
+      The undersigned hereby warrants that (1) all workmen employed by it or its subcontractors upon this Work have been fully paid to the date hereof, (2) all materialmen from whom the undersigned or its subcontractors have purchased materials used in this Work have been paid for materials delivered on or prior to, the date hereof, (3) none of such workmen and materialmen has any claim or demand or right of lien against the land and improvements described above, and (4) stipulates that he is an authorized officer with full power to execute this waiver of liens.
+    </p>
+
+    <div class="signature-block">
+      <div class="sig-line"></div>
+      <p class="by-line">By: {{company}}</p>
+    </div>
+
+    <div class="notary">
+      <table class="jurisdiction" role="presentation">
+        <tr>
+          <td>STATE OF {{notaryState}}</td>
+          <td>)</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>) ss.:</td>
+        </tr>
+        <tr>
+          <td>COUNTY OF {{notaryCounty}}</td>
+          <td>)</td>
+        </tr>
+      </table>
+
+      <div class="notary-ack-block">
+        <p>
+          On this ______ day of __________________, 20____, before me, a notary public
+          of the State of {{notaryState}}, personally came _________________________, to
+          me known, who, being by me duly sworn, said that he/she is
+          _________________________ of the _________________________ described in and
+          which executed the foregoing {{foregoingDoc}}, and acknowledged that he/she
+          executed the same as his/her free act and deed, for the uses and purposes
+          therein mentioned.
+        </p>
+
+        <div class="notary-sign">
+          <div class="notary-line"></div>
+          <p class="notary-label">Notary Public</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

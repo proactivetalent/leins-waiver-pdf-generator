@@ -1,0 +1,37 @@
+{
+  "name": "lien-waiver-generator",
+  "version": "0.1.0",
+  "private": true,
+  "puppeteer": {
+    "skipDownload": true
+  },
+  "scripts": {
+    "clean": "rm -rf .next node_modules/.cache",
+    "dev": "next dev",
+    "dev:clean": "npm run clean && next dev",
+    "dev:turbo": "next dev --turbopack",
+    "dev:clean:turbo": "npm run clean && next dev --turbopack",
+    "dev:webpack": "next dev",
+    "dev:clean:webpack": "npm run clean && next dev",
+    "build": "next build",
+    "preview": "npm run build && npm run start",
+    "start": "next start",
+    "lint": "eslint",
+    "install:browsers": "npx puppeteer browsers install chrome"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "next": "^15.1.0",
+    "puppeteer": "^24.40.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.1.0",
+    "tailwindcss": "^4.0.0"
+  }
+}
