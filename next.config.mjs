@@ -6,7 +6,13 @@
 // write `.next` and corrupt each other’s output.
 const nextConfig = {
   // Avoid pulling sheetjs through the server bundler graph incorrectly.
-  serverExternalPackages: ["xlsx", "puppeteer", "archiver"],
+  serverExternalPackages: [
+    "xlsx",
+    "puppeteer",
+    "puppeteer-core",
+    "@sparticuz/chromium",
+    "archiver",
+  ],
   // Next 15 enables this by default; it can break dev (React Client Manifest /
   // missing numbered chunks like ./331.js) on some setups. Safe to disable.
   experimental: {
