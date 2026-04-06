@@ -20,7 +20,7 @@
     "install:browsers": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
-    "@sparticuz/chromium": "^131.0.1",
+    "@sparticuz/chromium": "^143.0.4",
     "archiver": "^7.0.1",
     "next": "^15.1.0",
     "puppeteer": "^24.40.0",
