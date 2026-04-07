@@ -68,6 +68,24 @@ function Spinner({ className }) {
   );
 }
 
+function downloadFilenameFromDisposition(header) {
+  if (!header) return null;
+  const m = /filename="([^"]+)"/.exec(header);
+  return m?.[1] ?? null;
+}
+
+/** @returns {{ row: number, reason: string }[] | null} */
+function parseSkippedDetailHeader(b64) {
+  if (!b64) return null;
+  try {
+    const json = atob(b64);
+    const data = JSON.parse(json);
+    return Array.isArray(data) ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function WaiverForm() {
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
@@ -118,13 +136,20 @@ export default function WaiverForm() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "lien-waivers.zip";
+        const suggested =
+          downloadFilenameFromDisposition(res.headers.get("content-disposition")) ||
+          `Leins-Waivers-${new Date().toISOString().slice(0, 10)}.zip`;
+        a.download = suggested;
         a.rel = "noopener";
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
 
+        const skippedCount = Number(res.headers.get("X-Waiver-Skipped-Count") || 0);
+        const skippedDetail = parseSkippedDetailHeader(
+          res.headers.get("X-Waiver-Skipped-Detail")
+        );
         setSummary({
           downloaded: true,
           validRowCount: Number(res.headers.get("X-Waiver-Valid-Rows") || 0),
@@ -132,7 +157,8 @@ export default function WaiverForm() {
           pdfConditional: Number(res.headers.get("X-Waiver-Pdf-Conditional") || 0),
           pdfUnconditional: Number(res.headers.get("X-Waiver-Pdf-Unconditional") || 0),
           pdfPartial: Number(res.headers.get("X-Waiver-Pdf-Partial") || 0),
-          skippedCount: Number(res.headers.get("X-Waiver-Skipped-Count") || 0),
+          skippedCount,
+          skipped: skippedDetail ?? (skippedCount > 0 ? [] : undefined),
         });
         return;
       }
@@ -183,11 +209,15 @@ export default function WaiverForm() {
             <span className="text-zinc-700">Project</span> prints on the waiver header
             (left). Invoice type only needs a
             keyword (week, month, final, one-time, deposit, progress, or a month
-            name). You get a ZIP of PDFs plus{" "}
+            name). The ZIP includes{" "}
             <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-[11px] text-zinc-600">
               manifest.json
             </code>{" "}
-            for skipped rows.
+            (counts and skipped rows as JSON) and, when anything is skipped,{" "}
+            <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-[11px] text-zinc-600">
+              skipped-rows.txt
+            </code>{" "}
+            with a short comment per row explaining why it was skipped.
           </p>
         </header>
 
@@ -319,7 +349,38 @@ export default function WaiverForm() {
             </dl>
             <p className="mt-2 text-center text-[11px] text-emerald-800/80">
               {summary.pdfCount} PDF{summary.pdfCount === 1 ? "" : "s"} total in ZIP
+              {summary.skippedCount > 0 && (
+                <>
+                  {" "}
+                  · skipped rows are listed in{" "}
+                  <span className="font-medium">skipped-rows.txt</span> in the ZIP
+                </>
+              )}
             </p>
+            {summary.downloaded &&
+              summary.skippedCount > 0 &&
+              Array.isArray(summary.skipped) &&
+              summary.skipped.length > 0 && (
+                <div className="mt-4 rounded-lg border border-amber-200/80 bg-amber-50/90 px-3 py-3 text-left">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-900/90">
+                    Skipped rows — why no PDF
+                  </p>
+                  <ul className="mt-2 max-h-40 space-y-1.5 overflow-y-auto text-[11px] leading-snug text-amber-950/95">
+                    {summary.skipped.map((s) => (
+                      <li key={`${s.row}-${s.reason}`}>
+                        <span className="font-medium tabular-nums">Row {s.row}</span>
+                        <span className="text-amber-900/85"> — {s.reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            {summary.downloaded && summary.skippedCount > 0 && summary.skipped?.length === 0 && (
+              <p className="mt-3 text-center text-[11px] text-emerald-800/80">
+                Open <span className="font-medium">skipped-rows.txt</span> in the ZIP for the
+                reason each row was skipped.
+              </p>
+            )}
           </div>
         )}
 

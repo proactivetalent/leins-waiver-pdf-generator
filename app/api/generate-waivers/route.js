@@ -15,6 +15,12 @@ function isXlsxFilename(name) {
   return typeof name === "string" && name.toLowerCase().endsWith(".xlsx");
 }
 
+/** YYYY-MM-DD in UTC (same instant as `Date` on the server). */
+function lienWaiversZipFilename() {
+  const d = new Date().toISOString().slice(0, 10);
+  return `Leins-Waivers-${d}.zip`;
+}
+
 /**
  * POST /api/generate-waivers — multipart field "file" (.xlsx).
  * Returns application/zip on success, or JSON errors.
@@ -93,19 +99,30 @@ export async function POST(request) {
   try {
     const { zipBuffer, manifest } = await buildWaiverZip(validRows, skipped);
     const { pdfCounts } = manifest;
+    const zipName = lienWaiversZipFilename();
+
+    /** @type {Record<string, string>} */
+    const headers = {
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${zipName}"`,
+      "X-Waiver-Valid-Rows": String(manifest.validRowCount),
+      "X-Waiver-Pdf-Count": String(manifest.pdfCount),
+      "X-Waiver-Pdf-Conditional": String(pdfCounts.conditional),
+      "X-Waiver-Pdf-Unconditional": String(pdfCounts.unconditional),
+      "X-Waiver-Pdf-Partial": String(pdfCounts.partial),
+      "X-Waiver-Skipped-Count": String(skipped.length),
+    };
+    // Let the UI list skip reasons without opening the ZIP (omit if too large for proxies).
+    if (skipped.length > 0) {
+      const payload = Buffer.from(JSON.stringify(skipped), "utf8").toString("base64");
+      if (payload.length < 6000) {
+        headers["X-Waiver-Skipped-Detail"] = payload;
+      }
+    }
 
     return new NextResponse(zipBuffer, {
       status: 200,
-      headers: {
-        "Content-Type": "application/zip",
-        "Content-Disposition": 'attachment; filename="lien-waivers.zip"',
-        "X-Waiver-Valid-Rows": String(manifest.validRowCount),
-        "X-Waiver-Pdf-Count": String(manifest.pdfCount),
-        "X-Waiver-Pdf-Conditional": String(pdfCounts.conditional),
-        "X-Waiver-Pdf-Unconditional": String(pdfCounts.unconditional),
-        "X-Waiver-Pdf-Partial": String(pdfCounts.partial),
-        "X-Waiver-Skipped-Count": String(skipped.length),
-      },
+      headers,
     });
   } catch (err) {
     console.error("[generate-waivers]", err);
